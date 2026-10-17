@@ -1,3 +1,4 @@
+import 'package:budget_tracker/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,10 +14,7 @@ class BudgetApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Budget App')),
-        body: const Center(child: Text('Hello World!')),
-      ),
+      home: const HomeScreen(),
     );
   }
 }

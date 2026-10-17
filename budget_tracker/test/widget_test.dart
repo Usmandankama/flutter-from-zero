@@ -1,12 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:budget_tracker/main.dart';
 
 void main() {
-  testWidgets('App starts and shows its title', (WidgetTester tester) async {
+  testWidgets('Tapping + adds \$10 to the total', (WidgetTester tester) async {
     await tester.pumpWidget(const BudgetApp());
+    expect(find.text('\$0'), findsOneWidget);
 
-    expect(find.text('Budget App'), findsOneWidget);
-    expect(find.text('Hello World!'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+
+    expect(find.text('\$10'), findsOneWidget);
   });
 }
