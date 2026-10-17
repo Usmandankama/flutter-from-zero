@@ -30,6 +30,17 @@ flutter run
 
 Plug in your Android phone with USB debugging turned on first. Lesson 2 shows you how.
 
+## Build an APK to share (lesson 17)
+
+```
+cd budget_tracker
+flutter build apk --split-per-abi
+```
+
+This makes one smaller APK per phone type in `build/app/outputs/flutter-apk/`. Send `app-arm64-v8a-release.apk`: it works on almost every Android phone made in the last several years. On a very old phone, use `app-armeabi-v7a-release.apk` instead.
+
+The first build can take 20 minutes or more while it downloads Android build tools. Later builds are much faster.
+
 ## Folders
 
 - `dart_basics/`: the Dart examples from lessons 3 and 4. Run one with `dart run dart_basics/03_variables.dart`, or paste it into [DartPad](https://dartpad.dev).

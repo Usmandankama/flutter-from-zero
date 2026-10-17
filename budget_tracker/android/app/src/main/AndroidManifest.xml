@@ -3,7 +3,7 @@
          without this line the release APK can't reach the internet. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="budget_tracker"
+        android:label="Budget Tracker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
