@@ -32,4 +32,5 @@ Plug in your Android phone with USB debugging turned on first. Lesson 2 shows yo
 
 ## Folders
 
+- `dart_basics/`: the Dart examples from lessons 3 and 4. Run one with `dart run dart_basics/03_variables.dart`, or paste it into [DartPad](https://dartpad.dev).
 - `budget_tracker/`: the Flutter app we build from lesson 5 onwards.
