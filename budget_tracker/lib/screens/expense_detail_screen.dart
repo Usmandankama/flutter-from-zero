@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/expense.dart';
+import '../state/expense_store.dart';
 import '../utils/format.dart';
 
 class ExpenseDetailScreen extends StatelessWidget {
@@ -33,8 +35,8 @@ class ExpenseDetailScreen extends StatelessWidget {
 
     // The screen may have closed while the dialog was open.
     if (confirmed == true && context.mounted) {
-      // true tells the home screen "this one was deleted".
-      Navigator.pop(context, true);
+      context.read<ExpenseStore>().remove(expense.id);
+      Navigator.pop(context);
     }
   }
 

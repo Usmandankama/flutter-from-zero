@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:provider/provider.dart';
+
+import 'package:budget_tracker/data/sample_expenses.dart';
 import 'package:budget_tracker/main.dart';
+import 'package:budget_tracker/state/expense_store.dart';
 import 'package:budget_tracker/utils/format.dart';
+
+// The app the same way main() builds it, with a fresh store for each test.
+Widget buildApp() {
+  return ChangeNotifierProvider(
+    create: (context) => ExpenseStore(sampleExpenses),
+    child: const BudgetApp(),
+  );
+}
 
 void main() {
   test('formatNaira adds the symbol and commas', () {
@@ -13,14 +25,14 @@ void main() {
   });
 
   testWidgets('Home screen lists the expenses and the total', (WidgetTester tester) async {
-    await tester.pumpWidget(const BudgetApp());
+    await tester.pumpWidget(buildApp());
 
     expect(find.text('Suya'), findsOneWidget);
     expect(find.text('₦28,000'), findsOneWidget); // total of the samples
   });
 
   testWidgets('Adding an expense checks the form and updates the list', (WidgetTester tester) async {
-    await tester.pumpWidget(const BudgetApp());
+    await tester.pumpWidget(buildApp());
 
     await tester.tap(find.byIcon(Icons.add));
     await tester.pumpAndSettle();
@@ -41,7 +53,7 @@ void main() {
   });
 
   testWidgets('Deleting an expense removes it from the list', (WidgetTester tester) async {
-    await tester.pumpWidget(const BudgetApp());
+    await tester.pumpWidget(buildApp());
 
     await tester.tap(find.text('Suya'));
     await tester.pumpAndSettle();

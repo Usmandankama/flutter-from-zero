@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'data/sample_expenses.dart';
 import 'screens/home_screen.dart';
+import 'state/expense_store.dart';
 
 void main() {
-  runApp(const BudgetApp());
+  runApp(
+    // Everything below this can reach the ExpenseStore.
+    ChangeNotifierProvider(
+      create: (context) => ExpenseStore(sampleExpenses),
+      child: const BudgetApp(),
+    ),
+  );
 }
 
 class BudgetApp extends StatelessWidget {
