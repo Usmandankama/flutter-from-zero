@@ -40,11 +40,16 @@ class SummaryCard extends StatelessWidget {
               style: TextStyle(color: colors.onPrimary.withValues(alpha: 0.8)),
             ),
             const SizedBox(height: 4),
-            Text(
-              currency.format(total),
-              style: textTheme.headlineLarge?.copyWith(
-                color: colors.onPrimary,
-                fontWeight: FontWeight.w800,
+            // FittedBox shrinks a very large total so it stays on one line.
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                currency.format(total),
+                style: textTheme.headlineLarge?.copyWith(
+                  color: colors.onPrimary,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
             const SizedBox(height: 16),

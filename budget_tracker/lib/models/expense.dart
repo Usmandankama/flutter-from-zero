@@ -46,7 +46,11 @@ class Expense {
       id: json['id'] as String,
       title: json['title'] as String,
       amount: json['amount'] as int,
-      category: ExpenseCategory.values.byName(json['category'] as String),
+      // byName crashed on a category this version doesn't know, so we look
+      // it up instead and fall back to Other.
+      category:
+          ExpenseCategory.values.asNameMap()[json['category']] ??
+          ExpenseCategory.other,
       date: DateTime.parse(json['date'] as String),
     );
   }

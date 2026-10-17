@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/expense.dart';
@@ -14,10 +15,17 @@ class ExpenseStorage {
     if (text == null) {
       return []; // nothing saved yet: the first time the app runs
     }
-    final list = jsonDecode(text) as List<dynamic>;
-    return list
-        .map((item) => Expense.fromJson(item as Map<String, dynamic>))
-        .toList();
+    try {
+      final list = jsonDecode(text) as List<dynamic>;
+      return list
+          .map((item) => Expense.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } catch (error) {
+      // Damaged data used to stop the app on the loading spinner for ever.
+      // Now we log it and start with an empty list instead.
+      debugPrint('Could not read the saved expenses: $error');
+      return [];
+    }
   }
 
   Future<void> save(List<Expense> expenses) async {

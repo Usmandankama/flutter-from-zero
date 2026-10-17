@@ -23,7 +23,9 @@ class ExpenseTile extends StatelessWidget {
         foregroundColor: colors.onSecondaryContainer,
         child: Icon(expense.category.icon),
       ),
-      title: Text(expense.title),
+      // One line only: a long title ends in "..." instead of pushing
+      // the amount around.
+      title: Text(expense.title, maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Text(
         '${expense.category.label} · ${formatShortDate(expense.date)}',
       ),

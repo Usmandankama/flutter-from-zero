@@ -9,7 +9,9 @@ class RatesService {
 
   // How many dollars one naira is worth, e.g. 0.00065.
   Future<double> nairaToDollar() async {
-    final response = await http.get(_url);
+    // On a weak network a request can hang for minutes. After 10 seconds
+    // we give up, and the app shows the "check your internet" message.
+    final response = await http.get(_url).timeout(const Duration(seconds: 10));
     if (response.statusCode != 200) {
       throw Exception('The rates server replied ${response.statusCode}');
     }

@@ -46,35 +46,36 @@ class ExpenseDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Expense')),
-      body: Padding(
+      // A ListView scrolls when the screen is too short (a phone turned
+      // sideways). A Column with a Spacer overflowed there.
+      body: ListView(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(formatNaira(expense.amount), style: textTheme.displaySmall),
-            const SizedBox(height: 8),
-            Text(expense.title, style: textTheme.titleLarge),
-            const SizedBox(height: 24),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(expense.category.icon),
-              title: Text(expense.category.label),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.calendar_today),
-              title: Text(formatLongDate(expense.date)),
-            ),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () => _confirmDelete(context),
-                icon: const Icon(Icons.delete_outline),
-                label: const Text('Delete expense'),
-              ),
-            ),
-          ],
+        children: [
+          Text(formatNaira(expense.amount), style: textTheme.displaySmall),
+          const SizedBox(height: 8),
+          Text(expense.title, style: textTheme.titleLarge),
+          const SizedBox(height: 24),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(expense.category.icon),
+            title: Text(expense.category.label),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.calendar_today),
+            title: Text(formatLongDate(expense.date)),
+          ),
+        ],
+      ),
+      // bottomNavigationBar keeps the button pinned to the bottom edge.
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+          child: OutlinedButton.icon(
+            onPressed: () => _confirmDelete(context),
+            icon: const Icon(Icons.delete_outline),
+            label: const Text('Delete expense'),
+          ),
         ),
       ),
     );
