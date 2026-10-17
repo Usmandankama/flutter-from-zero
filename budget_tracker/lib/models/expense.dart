@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-// An enum with values: each category carries a label and an icon.
+// An enhanced enum: each category carries its own label and icon.
 enum ExpenseCategory {
-  food('Food', Icons.fastfood),
-  transport('Transport', Icons.directions_car),
-  entertainment('Entertainment', Icons.movie),
-  shopping('Shopping', Icons.shopping_cart),
-  bills('Bills', Icons.receipt),
-  others('Others', Icons.category);
+  food('Food', Icons.restaurant),
+  transport('Transport', Icons.directions_bus),
+  data('Data & airtime', Icons.wifi),
+  bills('Bills', Icons.receipt_long),
+  other('Other', Icons.more_horiz);
 
   const ExpenseCategory(this.label, this.icon);
 
@@ -15,19 +14,18 @@ enum ExpenseCategory {
   final IconData icon;
 }
 
-// The model: the shape every expense in the app follows.
 class Expense {
   Expense({
     required this.id,
     required this.title,
     required this.amount,
-    required this.date,
     required this.category,
+    required this.date,
   });
 
   final String id;
   final String title;
-  final int amount; // whole numbers only
-  final DateTime date;
+  final int amount; // whole naira
   final ExpenseCategory category;
+  final DateTime date;
 }

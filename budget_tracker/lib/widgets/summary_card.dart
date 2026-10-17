@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
-// Stateless: it only shows whatever total and count it is given.
-class Summarycard extends StatelessWidget {
-  const new({super.key, required this.total, required this.count});
+import '../models/expense.dart';
+import '../utils/format.dart';
 
-  final int total;
-  final int count;
+class SummaryCard extends StatelessWidget {
+  const SummaryCard({super.key, required this.expenses});
+
+  final List<Expense> expenses;
 
   @override
   Widget build(BuildContext context) {
-    // If there's nothing to divide by, the average is 0.
+    final colors = Theme.of(context).colorScheme;
+    final total = expenses.fold<int>(0, (sum, e) => sum + e.amount);
+    final count = expenses.length;
     final average = count == 0 ? 0 : total ~/ count;
 
     // Container: one box we can give a size, padding, colour and corners.
@@ -18,36 +21,24 @@ class Summarycard extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.deepOrange,
-        borderRadius: BorderRadius.circular(20),
+        color: colors.primaryContainer,
+        borderRadius: BorderRadius.circular(16),
       ),
+      // Column: children stacked top to bottom.
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Total',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
+          const Text('Total spent'),
           Text(
-            '\$$total',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.green,
-            ),
+            formatNaira(total),
+            style: Theme.of(context).textTheme.headlineLarge,
           ),
-
           const SizedBox(height: 16),
-          // Row: children side by side. Expanded gives each one half.
+          // Row: children side by side. Expanded makes each take an equal share.
           Row(
             children: [
-              Expanded(
-                child: _Stat(label: 'Income', value: '$count'),
-              ),
-              Expanded(
-                child: _Stat(label: 'Expenses', value: '$average'),
-              ),
+              Expanded(child: _Stat(label: 'Expenses', value: '$count')),
+              Expanded(child: _Stat(label: 'Average', value: formatNaira(average))),
             ],
           ),
         ],
@@ -56,9 +47,9 @@ class Summarycard extends StatelessWidget {
   }
 }
 
-// The underscore makes _Stat private to this file.
+// The _ at the start means only this file can use it.
 class _Stat extends StatelessWidget {
-  const new({super.key, required this.label, required this.value});
+  const _Stat({required this.label, required this.value});
 
   final String label;
   final String value;
@@ -66,12 +57,10 @@ class _Stat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16)),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
+        Text(label, style: Theme.of(context).textTheme.labelMedium),
+        Text(value, style: Theme.of(context).textTheme.titleMedium),
       ],
     );
   }
