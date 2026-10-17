@@ -3,14 +3,23 @@ import 'package:provider/provider.dart';
 
 import 'screens/home_screen.dart';
 import 'services/expense_storage.dart';
+import 'services/rates_service.dart';
+import 'state/currency_store.dart';
 import 'state/expense_store.dart';
 
 void main() {
   runApp(
-    // Everything below this can reach the ExpenseStore.
-    ChangeNotifierProvider(
-      // ..load() makes the store and starts loading the saved expenses.
-      create: (context) => ExpenseStore(ExpenseStorage())..load(),
+    // Everything below this can reach both stores.
+    MultiProvider(
+      providers: [
+        // ..load() makes the store and starts loading the saved expenses.
+        ChangeNotifierProvider(
+          create: (context) => ExpenseStore(ExpenseStorage())..load(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CurrencyStore(RatesService()),
+        ),
+      ],
       child: const BudgetApp(),
     ),
   );

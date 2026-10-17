@@ -45,9 +45,7 @@ class ExpenseDetailScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Expense'),
-      ),
+      appBar: AppBar(title: const Text('Expense')),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(

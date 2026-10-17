@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../state/currency_store.dart';
 import '../state/expense_store.dart';
 import '../widgets/expense_tile.dart';
 import '../widgets/summary_card.dart';
@@ -11,15 +12,45 @@ import 'expense_detail_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  Future<void> _toggleCurrency(BuildContext context) async {
+    final worked = await context.read<CurrencyStore>().toggle();
+    if (!worked && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Couldn't get today's rate. Check your internet and try again.",
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // watch: rebuild this screen whenever the store changes.
     final store = context.watch<ExpenseStore>();
+    final currency = context.watch<CurrencyStore>();
     final expenses = store.expenses;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Budget Tracker'),
+        actions: [
+          TextButton.icon(
+            // null switches the button off while the rate is loading.
+            onPressed: currency.isLoading
+                ? null
+                : () => _toggleCurrency(context),
+            icon: currency.isLoading
+                ? const SizedBox.square(
+                    dimension: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.currency_exchange),
+            label: Text(currency.showDollars ? 'USD' : 'NGN'),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: store.isLoading
           ? const Center(child: CircularProgressIndicator())

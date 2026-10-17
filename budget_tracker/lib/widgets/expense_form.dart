@@ -118,10 +118,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               },
             ),
             const SizedBox(height: 24),
-            FilledButton(
-              onPressed: _submit,
-              child: const Text('Save expense'),
-            ),
+            FilledButton(onPressed: _submit, child: const Text('Save expense')),
           ],
         ),
       ),

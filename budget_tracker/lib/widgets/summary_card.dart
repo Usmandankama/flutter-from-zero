@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/expense.dart';
-import '../utils/format.dart';
+import '../state/currency_store.dart';
 
 class SummaryCard extends StatelessWidget {
   const SummaryCard({super.key, required this.expenses});
@@ -11,6 +12,7 @@ class SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final currency = context.watch<CurrencyStore>();
     final total = expenses.fold<int>(0, (sum, e) => sum + e.amount);
     final count = expenses.length;
     final average = count == 0 ? 0 : total ~/ count;
@@ -30,17 +32,28 @@ class SummaryCard extends StatelessWidget {
         children: [
           const Text('Total spent'),
           Text(
-            formatNaira(total),
+            currency.format(total),
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           const SizedBox(height: 16),
           // Row: children side by side. Expanded makes each take an equal share.
           Row(
             children: [
-              Expanded(child: _Stat(label: 'Expenses', value: '$count')),
-              Expanded(child: _Stat(label: 'Average', value: formatNaira(average))),
+              Expanded(
+                child: _Stat(label: 'Expenses', value: '$count'),
+              ),
+              Expanded(
+                child: _Stat(label: 'Average', value: currency.format(average)),
+              ),
             ],
           ),
+          if (currency.showDollars) ...[
+            const SizedBox(height: 12),
+            Text(
+              'Rates by exchangerate-api.com',
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+          ],
         ],
       ),
     );

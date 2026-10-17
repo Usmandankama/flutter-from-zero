@@ -10,9 +10,7 @@ class AddExpenseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add expense'),
-      ),
+      appBar: AppBar(title: const Text('Add expense')),
       body: SingleChildScrollView(
         child: ExpenseForm(
           onSubmit: (expense) {

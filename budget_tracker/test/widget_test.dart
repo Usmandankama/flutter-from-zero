@@ -7,24 +7,42 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:budget_tracker/main.dart';
 import 'package:budget_tracker/services/expense_storage.dart';
+import 'package:budget_tracker/services/rates_service.dart';
+import 'package:budget_tracker/state/currency_store.dart';
 import 'package:budget_tracker/state/expense_store.dart';
 import 'package:budget_tracker/utils/format.dart';
 
 import 'test_expenses.dart';
 
-// The app the same way main() builds it, with a fresh store for each test.
-Widget buildApp() {
-  return ChangeNotifierProvider(
-    create: (context) => ExpenseStore(ExpenseStorage())..load(),
+// Tests mustn't depend on the internet, so these stand in for the real rates.
+class FakeRates extends RatesService {
+  @override
+  Future<double> nairaToDollar() async => 0.001; // ₦1,000 = $1
+}
+
+class BrokenRates extends RatesService {
+  @override
+  Future<double> nairaToDollar() async => throw Exception('No internet');
+}
+
+// The app the same way main() builds it, with fresh stores for each test.
+Widget buildApp({RatesService? rates}) {
+  return MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => ExpenseStore(ExpenseStorage())..load(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => CurrencyStore(rates ?? FakeRates()),
+      ),
+    ],
     child: const BudgetApp(),
   );
 }
 
 // Pretend the phone already has these expenses saved.
 void savedOnPhone(List<Object> expenses) {
-  SharedPreferences.setMockInitialValues({
-    'expenses': jsonEncode(expenses),
-  });
+  SharedPreferences.setMockInitialValues({'expenses': jsonEncode(expenses)});
 }
 
 void main() {
@@ -35,7 +53,46 @@ void main() {
     expect(formatNaira(1234567), '₦1,234,567');
   });
 
-  testWidgets('Home screen lists the expenses and the total', (WidgetTester tester) async {
+  test('formatDollars shows cents', () {
+    expect(formatDollars(0), '\$0.00');
+    expect(formatDollars(1.6), '\$1.60');
+    expect(formatDollars(28), '\$28.00');
+    expect(formatDollars(1234.567), '\$1,234.57');
+  });
+
+  testWidgets('The currency button switches totals to dollars and back', (
+    WidgetTester tester,
+  ) async {
+    savedOnPhone(testExpenses);
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('NGN'));
+    await tester.pumpAndSettle();
+    expect(find.text('\$28.00'), findsOneWidget);
+
+    await tester.tap(find.text('USD'));
+    await tester.pumpAndSettle();
+    expect(find.text('₦28,000'), findsOneWidget);
+  });
+
+  testWidgets('No internet shows a message and stays in naira', (
+    WidgetTester tester,
+  ) async {
+    savedOnPhone(testExpenses);
+    await tester.pumpWidget(buildApp(rates: BrokenRates()));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('NGN'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining("Couldn't get today's rate"), findsOneWidget);
+    expect(find.text('₦28,000'), findsOneWidget);
+  });
+
+  testWidgets('Home screen lists the expenses and the total', (
+    WidgetTester tester,
+  ) async {
     savedOnPhone(testExpenses);
     await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
@@ -44,7 +101,9 @@ void main() {
     expect(find.text('₦28,000'), findsOneWidget);
   });
 
-  testWidgets('A new install shows the empty message', (WidgetTester tester) async {
+  testWidgets('A new install shows the empty message', (
+    WidgetTester tester,
+  ) async {
     savedOnPhone([]);
     await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
@@ -52,7 +111,9 @@ void main() {
     expect(find.text('No expenses yet'), findsOneWidget);
   });
 
-  testWidgets('Adding an expense checks the form and updates the list', (WidgetTester tester) async {
+  testWidgets('Adding an expense checks the form and updates the list', (
+    WidgetTester tester,
+  ) async {
     savedOnPhone(testExpenses);
     await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
@@ -64,7 +125,10 @@ void main() {
     await tester.tap(find.text('Save expense'));
     await tester.pump();
     expect(find.text('What did you spend on?'), findsOneWidget);
-    expect(find.text('Enter the amount as a number, like 2500'), findsOneWidget);
+    expect(
+      find.text('Enter the amount as a number, like 2500'),
+      findsOneWidget,
+    );
 
     await tester.enterText(find.byType(TextFormField).at(0), 'Shawarma');
     await tester.enterText(find.byType(TextFormField).at(1), '3,000');
@@ -75,7 +139,9 @@ void main() {
     expect(find.text('₦31,000'), findsOneWidget); // 28,000 + 3,000
   });
 
-  testWidgets('Deleting an expense removes it from the list', (WidgetTester tester) async {
+  testWidgets('Deleting an expense removes it from the list', (
+    WidgetTester tester,
+  ) async {
     savedOnPhone(testExpenses);
     await tester.pumpWidget(buildApp());
     await tester.pumpAndSettle();
