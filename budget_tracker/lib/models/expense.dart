@@ -28,4 +28,26 @@ class Expense {
   final int amount; // whole naira
   final ExpenseCategory category;
   final DateTime date;
+
+  // To save an expense we turn it into a Map of simple values (JSON)...
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'amount': amount,
+      'category': category.name, // e.g. "food"
+      'date': date.toIso8601String(), // e.g. "2026-10-17T13:45:00.000"
+    };
+  }
+
+  // ...and to load it, we turn that Map back into an Expense.
+  factory Expense.fromJson(Map<String, dynamic> json) {
+    return Expense(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      amount: json['amount'] as int,
+      category: ExpenseCategory.values.byName(json['category'] as String),
+      date: DateTime.parse(json['date'] as String),
+    );
+  }
 }

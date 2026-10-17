@@ -1,19 +1,30 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:budget_tracker/data/sample_expenses.dart';
 import 'package:budget_tracker/main.dart';
+import 'package:budget_tracker/services/expense_storage.dart';
 import 'package:budget_tracker/state/expense_store.dart';
 import 'package:budget_tracker/utils/format.dart';
+
+import 'test_expenses.dart';
 
 // The app the same way main() builds it, with a fresh store for each test.
 Widget buildApp() {
   return ChangeNotifierProvider(
-    create: (context) => ExpenseStore(sampleExpenses),
+    create: (context) => ExpenseStore(ExpenseStorage())..load(),
     child: const BudgetApp(),
   );
+}
+
+// Pretend the phone already has these expenses saved.
+void savedOnPhone(List<Object> expenses) {
+  SharedPreferences.setMockInitialValues({
+    'expenses': jsonEncode(expenses),
+  });
 }
 
 void main() {
@@ -25,14 +36,26 @@ void main() {
   });
 
   testWidgets('Home screen lists the expenses and the total', (WidgetTester tester) async {
+    savedOnPhone(testExpenses);
     await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
 
     expect(find.text('Suya'), findsOneWidget);
-    expect(find.text('₦28,000'), findsOneWidget); // total of the samples
+    expect(find.text('₦28,000'), findsOneWidget);
+  });
+
+  testWidgets('A new install shows the empty message', (WidgetTester tester) async {
+    savedOnPhone([]);
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('No expenses yet'), findsOneWidget);
   });
 
   testWidgets('Adding an expense checks the form and updates the list', (WidgetTester tester) async {
+    savedOnPhone(testExpenses);
     await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byIcon(Icons.add));
     await tester.pumpAndSettle();
@@ -53,7 +76,9 @@ void main() {
   });
 
   testWidgets('Deleting an expense removes it from the list', (WidgetTester tester) async {
+    savedOnPhone(testExpenses);
     await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Suya'));
     await tester.pumpAndSettle();
@@ -64,5 +89,19 @@ void main() {
 
     expect(find.text('Suya'), findsNothing);
     expect(find.text('₦25,500'), findsOneWidget); // 28,000 - 2,500
+  });
+
+  test('Expenses are still there after the app restarts', () async {
+    savedOnPhone([]);
+    final before = ExpenseStore(ExpenseStorage());
+    await before.load();
+    await before.add(testExpenses.first);
+
+    // A brand-new store, like opening the app again.
+    final after = ExpenseStore(ExpenseStorage());
+    await after.load();
+
+    expect(after.expenses.single.title, testExpenses.first.title);
+    expect(after.expenses.single.amount, testExpenses.first.amount);
   });
 }

@@ -14,37 +14,42 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // watch: rebuild this screen whenever the store changes.
-    final expenses = context.watch<ExpenseStore>().expenses;
+    final store = context.watch<ExpenseStore>();
+    final expenses = store.expenses;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Budget Tracker'),
       ),
-      body: Column(
-        children: [
-          SummaryCard(expenses: expenses),
-          Expanded(
-            child: ListView.builder(
-              itemCount: expenses.length,
-              itemBuilder: (context, index) {
-                final expense = expenses[index];
-                return ExpenseTile(
-                  expense: expense,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ExpenseDetailScreen(expense: expense),
-                      ),
-                    );
-                  },
-                );
-              },
+      body: store.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                SummaryCard(expenses: expenses),
+                Expanded(
+                  child: expenses.isEmpty
+                      ? const _EmptyState()
+                      : ListView.builder(
+                          itemCount: expenses.length,
+                          itemBuilder: (context, index) {
+                            final expense = expenses[index];
+                            return ExpenseTile(
+                              expense: expense,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ExpenseDetailScreen(expense: expense),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -54,6 +59,35 @@ class HomeScreen extends StatelessWidget {
         },
         tooltip: 'Add expense',
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.receipt_long, size: 64),
+            const SizedBox(height: 16),
+            Text(
+              'No expenses yet',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Tap + to add the first thing you spent money on.',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,7 @@
-import '../models/expense.dart';
+import 'package:budget_tracker/models/expense.dart';
 
-// Made-up expenses so we have something to show while we build the list.
-final sampleExpenses = <Expense>[
+// Made-up expenses for the tests. They add up to ₦28,000.
+final testExpenses = <Expense>[
   Expense(
     id: '1',
     title: 'Suya',
