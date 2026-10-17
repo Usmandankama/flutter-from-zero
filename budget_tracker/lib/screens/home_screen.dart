@@ -61,6 +61,8 @@ class HomeScreen extends StatelessWidget {
                   child: expenses.isEmpty
                       ? const _EmptyState()
                       : ListView.builder(
+                          // Room at the bottom so the button never hides the last row.
+                          padding: const EdgeInsets.only(bottom: 96),
                           itemCount: expenses.length,
                           itemBuilder: (context, index) {
                             final expense = expenses[index];
@@ -81,15 +83,15 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddExpenseScreen()),
           );
         },
-        tooltip: 'Add expense',
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('Add expense'),
       ),
     );
   }
@@ -106,7 +108,11 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.receipt_long, size: 64),
+            Icon(
+              Icons.receipt_long,
+              size: 64,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             const SizedBox(height: 16),
             Text(
               'No expenses yet',
@@ -114,7 +120,7 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             const Text(
-              'Tap + to add the first thing you spent money on.',
+              'Tap "Add expense" to add the first thing you spent money on.',
               textAlign: TextAlign.center,
             ),
           ],

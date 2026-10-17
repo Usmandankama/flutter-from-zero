@@ -6,6 +6,7 @@ import 'services/expense_storage.dart';
 import 'services/rates_service.dart';
 import 'state/currency_store.dart';
 import 'state/expense_store.dart';
+import 'theme.dart';
 
 void main() {
   runApp(
@@ -33,9 +34,9 @@ class BudgetApp extends StatelessWidget {
     return MaterialApp(
       title: 'Budget Tracker',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-      ),
+      theme: buildTheme(Brightness.light),
+      darkTheme: buildTheme(Brightness.dark),
+      themeMode: ThemeMode.system, // follow the phone's dark mode setting
       home: const HomeScreen(),
     );
   }

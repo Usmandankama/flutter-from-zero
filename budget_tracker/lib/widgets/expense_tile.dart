@@ -13,16 +13,23 @@ class ExpenseTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return ListTile(
       onTap: onTap,
-      leading: CircleAvatar(child: Icon(expense.category.icon)),
+      leading: CircleAvatar(
+        backgroundColor: colors.secondaryContainer,
+        foregroundColor: colors.onSecondaryContainer,
+        child: Icon(expense.category.icon),
+      ),
       title: Text(expense.title),
       subtitle: Text(
         '${expense.category.label} · ${formatShortDate(expense.date)}',
       ),
       trailing: Text(
         context.watch<CurrencyStore>().format(expense.amount),
-        style: Theme.of(context).textTheme.titleMedium,
+        style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
       ),
     );
   }
