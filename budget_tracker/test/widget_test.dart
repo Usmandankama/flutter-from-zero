@@ -39,4 +39,18 @@ void main() {
     expect(find.text('Shawarma'), findsOneWidget);
     expect(find.text('₦31,000'), findsOneWidget); // 28,000 + 3,000
   });
+
+  testWidgets('Deleting an expense removes it from the list', (WidgetTester tester) async {
+    await tester.pumpWidget(const BudgetApp());
+
+    await tester.tap(find.text('Suya'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete expense'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Suya'), findsNothing);
+    expect(find.text('₦25,500'), findsOneWidget); // 28,000 - 2,500
+  });
 }

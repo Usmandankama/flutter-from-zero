@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../data/sample_expenses.dart';
 import '../models/expense.dart';
-import '../widgets/expense_form.dart';
 import '../widgets/expense_tile.dart';
 import '../widgets/summary_card.dart';
+import 'add_expense_screen.dart';
+import 'expense_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,33 +15,37 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // A copy of the sample list, so we can add to it.
+  // A copy of the sample list, so we can add to it and delete from it.
   final List<Expense> _expenses = [...sampleExpenses];
 
-  void _openAddExpense() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // lets the sheet grow when the keyboard opens
-      useSafeArea: true,
-      builder: (sheetContext) {
-        return Padding(
-          // Push the form up above the keyboard.
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
-          ),
-          child: SingleChildScrollView(
-            child: ExpenseForm(
-              onSubmit: (expense) {
-                setState(() {
-                  _expenses.insert(0, expense); // newest first
-                });
-                Navigator.pop(sheetContext); // close the sheet
-              },
-            ),
-          ),
-        );
-      },
+  Future<void> _openAddExpense() async {
+    // push opens a new screen on top. await waits until it closes,
+    // and gives us whatever that screen passed to Navigator.pop.
+    final expense = await Navigator.push<Expense>(
+      context,
+      MaterialPageRoute(builder: (context) => const AddExpenseScreen()),
     );
+    if (expense == null) {
+      return; // they went back without saving
+    }
+    setState(() {
+      _expenses.insert(0, expense); // newest first
+    });
+  }
+
+  Future<void> _openExpense(Expense expense) async {
+    final deleted = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ExpenseDetailScreen(expense: expense),
+      ),
+    );
+    if (deleted != true) {
+      return;
+    }
+    setState(() {
+      _expenses.removeWhere((e) => e.id == expense.id);
+    });
   }
 
   @override
@@ -58,7 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ListView.builder(
               itemCount: _expenses.length,
               itemBuilder: (context, index) {
-                return ExpenseTile(expense: _expenses[index]);
+                final expense = _expenses[index];
+                return ExpenseTile(
+                  expense: expense,
+                  onTap: () => _openExpense(expense),
+                );
               },
             ),
           ),
