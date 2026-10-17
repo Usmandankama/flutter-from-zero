@@ -1,32 +1,24 @@
-// 1234567 -> 1,234,567
-String _withCommas(int number) {
-  final digits = number.abs().toString();
-  final buffer = StringBuffer();
-  for (var i = 0; i < digits.length; i++) {
-    // Put a comma before every group of three digits, counting from the end.
-    if (i > 0 && (digits.length - i) % 3 == 0) {
-      buffer.write(',');
-    }
-    buffer.write(digits[i]);
-  }
-  final sign = number < 0 ? '-' : '';
-  return '$sign$buffer';
-}
+import 'package:intl/intl.dart';
+
+// The intl package already knows how to format money and dates,
+// so we don't have to write (and test) that code ourselves.
+final _naira = NumberFormat.currency(
+  locale: 'en',
+  symbol: '₦',
+  decimalDigits: 0,
+);
+final _dollars = NumberFormat.currency(locale: 'en', symbol: '\$');
+final _shortDate = DateFormat('d MMM');
+final _longDate = DateFormat('EEEE d MMMM y, h:mm a');
 
 // 2500 -> ₦2,500
-String formatNaira(int amount) {
-  return '₦${_withCommas(amount)}';
-}
+String formatNaira(int amount) => _naira.format(amount);
 
 // 1.6 -> $1.60
-String formatDollars(double amount) {
-  final cents = (amount * 100).round();
-  final dollars = cents ~/ 100;
-  final rest = (cents % 100).toString().padLeft(2, '0');
-  return '\$${_withCommas(dollars)}.$rest';
-}
+String formatDollars(double amount) => _dollars.format(amount);
 
-// 17/10/2026
-String formatShortDate(DateTime date) {
-  return '${date.day}/${date.month}/${date.year}';
-}
+// 17 Oct
+String formatShortDate(DateTime date) => _shortDate.format(date);
+
+// Saturday 17 October 2026, 1:45 PM
+String formatLongDate(DateTime date) => _longDate.format(date);

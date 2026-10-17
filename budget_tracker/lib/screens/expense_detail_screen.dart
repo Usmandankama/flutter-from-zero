@@ -63,7 +63,7 @@ class ExpenseDetailScreen extends StatelessWidget {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.calendar_today),
-              title: Text(formatShortDate(expense.date)),
+              title: Text(formatLongDate(expense.date)),
             ),
             const Spacer(),
             SizedBox(

@@ -60,6 +60,12 @@ void main() {
     expect(formatDollars(1234.567), '\$1,234.57');
   });
 
+  test('Dates are short in the list and long on the detail screen', () {
+    final date = DateTime(2026, 10, 17, 13, 45);
+    expect(formatShortDate(date), '17 Oct');
+    expect(formatLongDate(date), 'Saturday 17 October 2026, 1:45 PM');
+  });
+
   testWidgets('The currency button switches totals to dollars and back', (
     WidgetTester tester,
   ) async {
