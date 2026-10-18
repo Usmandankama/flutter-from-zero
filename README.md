@@ -13,8 +13,8 @@ Every coding lesson has a tag (`lesson-03`, `lesson-04` … `lesson-18`) that ho
 
 **With git:**
 ```
-git clone <repo-url>
-cd <repo-folder>
+git clone https://github.com/Usmandankama/flutter-from-zero.git
+cd flutter-from-zero
 git checkout lesson-08
 ```
 
