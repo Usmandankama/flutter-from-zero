@@ -4,7 +4,7 @@ This is the code for **Flutter from Zero: Build and Ship Your First App** on [Pa
 
 ## Get the code for any lesson
 
-Every coding lesson has a tag (`lesson-03`, `lesson-04` … `lesson-18`) that holds the code exactly as it is **at the end of that lesson**.
+Every coding lesson has a tag (`lesson-03`, `lesson-04` … `lesson-17`) that holds the code exactly as it is **at the end of that lesson**.
 
 **Without git (easiest):**
 1. On this repo's GitHub page, click **Tags**.
