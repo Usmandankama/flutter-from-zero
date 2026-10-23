@@ -12,7 +12,7 @@ Every coding lesson has a tag that holds the code exactly as it is **at the end 
 | Course | Lesson | Tag |
 |---|---|---|
 | Flutter from Zero | 03 · Dart basics: variables, types and null safety | `lesson-03` |
-| Flutter from Zero | 04 · Dart basics: functions, lists, maps and classes | `lesson-04` |
+| Flutter from Zero | 04 · Dart basics: functions, classes and lists | `lesson-04` |
 | Flutter from Zero | 05 · Your first app: main.dart and hot reload | `lesson-05` |
 | Flutter from Zero | 06 · Widgets: stateless vs stateful | `lesson-06` |
 | Flutter from Zero | 07 · Layout: Row, Column, Container and Expanded | `lesson-07` |
