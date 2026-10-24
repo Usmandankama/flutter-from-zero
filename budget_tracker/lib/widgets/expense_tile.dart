@@ -1,9 +1,10 @@
-import 'package:budget_tracker/models/expense.dart';
 import 'package:flutter/material.dart';
 
-// One row in the list: an icon, the title, the amount and date, and the category.
-class ExpesnseTile extends StatelessWidget {
-  const ExpesnseTile({super.key, required this.expense});
+import '../models/expense.dart';
+import '../utils/format.dart';
+
+class ExpenseTile extends StatelessWidget {
+  const ExpenseTile({super.key, required this.expense});
 
   final Expense expense;
 
@@ -11,12 +12,16 @@ class ExpesnseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: Colors.deepOrange,
-        child: Icon(expense.category.icon, color: Colors.white),
+        child: Icon(expense.category.icon),
       ),
       title: Text(expense.title),
-      subtitle: Text('\$${expense.amount} - ${expense.date.toLocal()}'),
-      trailing: Text(expense.category.label),
+      subtitle: Text(
+        '${expense.category.label} · ${formatShortDate(expense.date)}',
+      ),
+      trailing: Text(
+        formatNaira(expense.amount),
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
     );
   }
 }

@@ -1,50 +1,37 @@
-import 'package:budget_tracker/widgets/summary_card.dart';
 import 'package:flutter/material.dart';
 
-import '../data/sampl_expeses.dart';
+import '../data/sample_expenses.dart';
 import '../models/expense.dart';
 import '../widgets/expense_tile.dart';
+import '../widgets/summary_card.dart';
 
-// Stateful: the total changes while the app is running.
 class HomeScreen extends StatefulWidget {
-  const new({super.key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // The three dots copy the sample expenses into our own list.
-  final List<Expense> _expenses = [...SampleExpense];
-
-  int _total = 0;
-  int _count = 0;
-
-  void _addSpending(int amount) {
-    // setState tells Flutter "something changed, build the screen again".
-    setState(() {
-      _total += amount;
-      _count += 1;
-    });
-
-    // _total += amount;
-  }
+  // A copy of the sample list. In lesson 9 we'll add to it.
+  final List<Expense> _expenses = [...sampleExpenses];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Budget App')),
+      appBar: AppBar(
+        title: const Text('Budget Tracker'),
+      ),
       body: Column(
         children: [
-          Summarycard(total: _total, count: _count),
-          // Expanded gives the list all the space below the card.
+          SummaryCard(expenses: _expenses),
           Expanded(
-            // ListView.builder only builds the rows you can see.
+            // ListView.builder only builds the rows you can see,
+            // so it stays fast even with thousands of expenses.
             child: ListView.builder(
               itemCount: _expenses.length,
               itemBuilder: (context, index) {
-                final expense = _expenses[index];
-                return ExpesnseTile(expense: expense);
+                return ExpenseTile(expense: _expenses[index]);
               },
             ),
           ),
