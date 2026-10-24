@@ -27,7 +27,7 @@ Every coding lesson has a tag that holds the code exactly as it is **at the end 
 | Flutter from Zero 2 | 08 · Reading error messages and debugging | `lesson-16` |
 | Flutter from Zero 2 | 09 · Build a release APK and share it on WhatsApp | `lesson-17` |
 
-Lessons 01 and 02 of the first course and lesson 10 of the second have no code of their own. **Starting with Flutter from Zero 2?** Download `lesson-08` and begin from there.
+Lessons 01 and 02 of the first course and lesson 10 of the second have no code of their own. **Starting Flutter from Zero 2?** Download `course-2-start` and begin from there. It's the course 1 app (`lesson-08`), tidied up: naira amounts, six sample expenses and a summary card worked out from the list.
 
 **Without git (easiest):**
 1. On this repo's GitHub page, click **Tags**.
